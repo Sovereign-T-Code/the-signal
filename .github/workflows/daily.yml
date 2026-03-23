@@ -25,6 +25,14 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
+      - name: Extract headline for notification
+        id: headline
+        run: |
+          HEADLINE=$(grep -oP '(?<=<h3>)[^<]+' docs/index.html | head -1 || echo "Today's Signal")
+          echo "headline=$HEADLINE" >> "$GITHUB_OUTPUT"
+          DATE=$(date -u +%Y-%m-%d)
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"
+
       - name: Commit and push new edition
         run: |
           git config user.name "The Signal Bot"
@@ -33,3 +41,30 @@ jobs:
           git diff --cached --quiet && echo "No changes to commit" && exit 0
           git commit -m "Edition: $(date -u +%Y-%m-%d)"
           git push
+
+      - name: Send email notification
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.GMAIL_USERNAME }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: "📡 The Signal — ${{ steps.headline.outputs.date }}"
+          to: tereldaley@gmail.com
+          from: "The Signal <tereldaley@gmail.com>"
+          html_body: |
+            <div style="font-family: -apple-system, system-ui, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px;">
+              <div style="font-size: 11px; letter-spacing: 3px; color: #e89650; font-weight: 500; margin-bottom: 16px;">THE SIGNAL</div>
+              <p style="color: #333; font-size: 15px; line-height: 1.6; margin-bottom: 20px;">
+                Today's edition is live.<br>
+                <strong>Lead story:</strong> ${{ steps.headline.outputs.headline }}
+              </p>
+              <a href="https://sovereign-t-code.github.io/the-signal/"
+                 style="display: inline-block; background: #e89650; color: #fff; padding: 10px 24px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500;">
+                Read Today's Signal →
+              </a>
+              <p style="color: #999; font-size: 12px; margin-top: 24px;">
+                Generated automatically at 9:35 AM EST
+              </p>
+            </div>
