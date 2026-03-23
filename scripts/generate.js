@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ override: true });
 const fs = require('fs');
 const path = require('path');
 const Anthropic = require('@anthropic-ai/sdk').default;

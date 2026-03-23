@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Signal — Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #1a1814;
+      color: #f0ece4;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      max-width: 660px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid rgba(232,150,80,0.2);
+      padding-bottom: 12px;
+      margin-bottom: 32px;
+    }
+    .logo {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #e89650;
+      font-weight: 500;
+    }
+    .page-title {
+      font-size: 13px;
+      color: #9e9888;
+      font-weight: 400;
+    }
+    .archive-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .archive-entry {
+      display: flex;
+      gap: 16px;
+      align-items: baseline;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      text-decoration: none;
+      transition: background 0.15s;
+      padding-left: 8px;
+      padding-right: 8px;
+      border-radius: 4px;
+    }
+    .archive-entry:hover {
+      background: rgba(232,150,80,0.06);
+    }
+    .archive-date {
+      font-size: 13px;
+      color: #8a8578;
+      white-space: nowrap;
+      min-width: 130px;
+    }
+    .archive-headline {
+      font-size: 14px;
+      color: #e8e4dc;
+      font-weight: 500;
+    }
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 48px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      font-size: 11px;
+      color: #6b665c;
+    }
+    @media (max-width: 600px) {
+      .archive-entry { flex-direction: column; gap: 4px; }
+      .archive-date { min-width: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="index.html" style="text-decoration:none"><span class="logo">THE SIGNAL</span></a>
+      <span class="page-title">Archive</span>
+    </header>
+    <div class="archive-list">
+    <!-- ENTRIES -->
+    <a href="editions/2026-03-23.html" class="archive-entry">
+      <span class="archive-date">March 23, 2026</span>
+      <span class="archive-headline">Musk Unveils $25B &quot;Terafab&quot; — A Joint Tesla-SpaceX-xAI Chip Factory in Austin</span>
+    </a>
+    </div>
+    <footer>
+      <span>Written by Claude &middot; Curated for you</span>
+      <span>thesignal.ai</span>
+    </footer>
+  </div>
+</body>
+</html>

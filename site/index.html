@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Signal — March 23, 2026</title>
+  <meta name="description" content="Daily AI and robotics briefing with a financial lens.">
+  <link rel="canonical" href="editions/2026-03-23.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ===== Reset ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ===== Custom Properties ===== */
+    :root {
+      --bg: #1a1814;
+      --text-primary: #f0ece4;
+      --text-body: #e8e4dc;
+      --text-secondary: #9e9888;
+      --text-muted: #8a8578;
+      --text-dim: #6b665c;
+      --text-faint: #5a564e;
+      --accent: #e89650;
+      --green: #7aab6e;
+      --red: #c75c5c;
+      --blue: #6b9ec4;
+      --purple: #b088d0;
+      --pink: #c4697a;
+      --border-subtle: rgba(232,150,80,0.2);
+      --card-bg: rgba(255,255,255,0.02);
+      --card-bg-hover: rgba(255,255,255,0.03);
+      --divider: linear-gradient(90deg, transparent, rgba(232,150,80,0.15), transparent);
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-serif: 'Lora', 'Georgia', 'Times New Roman', serif;
+    }
+
+    /* ===== Base ===== */
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container {
+      max-width: 660px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    /* ===== Header ===== */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .header-date {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    /* ===== Market Pulse Bar ===== */
+    .market-pulse {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 12px 14px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      margin-bottom: 24px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.1) transparent;
+    }
+
+    .market-pulse::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .market-pulse::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .market-pulse::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+    }
+
+    .ticker-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      font-size: 13px;
+      padding: 4px 0;
+    }
+
+    .ticker-symbol {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .ticker-price {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .ticker-change {
+      font-weight: 500;
+      font-size: 12px;
+    }
+
+    .ticker-chip.positive .ticker-change { color: var(--green); }
+    .ticker-chip.negative .ticker-change { color: var(--red); }
+
+    .ticker-chip + .ticker-chip {
+      padding-left: 10px;
+      border-left: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .no-data {
+      color: var(--text-dim);
+      font-size: 13px;
+      font-style: italic;
+    }
+
+    /* ===== Lead-in ===== */
+    .lead-in {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 16px;
+      line-height: 1.7;
+      color: #b8b2a6;
+      margin-bottom: 28px;
+      padding: 0 4px;
+    }
+
+    /* ===== Stories ===== */
+    .stories {
+      margin-bottom: 32px;
+    }
+
+    .story {
+      margin-bottom: 8px;
+    }
+
+    .story-header {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .category-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: var(--bg);
+      text-transform: capitalize;
+      flex-shrink: 0;
+    }
+
+    .category-models { background: var(--accent); }
+    .category-robotics { background: var(--green); }
+    .category-business { background: var(--blue); }
+    .category-research { background: var(--purple); }
+    .category-policy { background: var(--pink); }
+
+    .story-header h3 {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.35;
+    }
+
+    .story-body {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .why-it-matters {
+      font-size: 12px;
+      color: var(--accent);
+      opacity: 0.7;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .market-note {
+      background: var(--card-bg-hover);
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+    }
+
+    .market-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      color: var(--blue);
+      margin-bottom: 4px;
+    }
+
+    .market-note p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .story-divider {
+      height: 1px;
+      background: var(--divider);
+      margin: 24px 0;
+    }
+
+    /* ===== Sector Heatmap ===== */
+    .heatmap-section {
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 14px;
+    }
+
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
+    }
+
+    .heatmap-card {
+      background: var(--card-bg);
+      border-radius: 6px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      transition: background 0.15s;
+    }
+
+    .heatmap-card.positive {
+      background: rgba(122,171,110, calc(0.06 + 0.12 * var(--intensity, 0)));
+      border: 1px solid rgba(122,171,110, calc(0.1 + 0.15 * var(--intensity, 0)));
+    }
+
+    .heatmap-card.negative {
+      background: rgba(199,92,92, calc(0.06 + 0.12 * var(--intensity, 0)));
+      border: 1px solid rgba(199,92,92, calc(0.1 + 0.15 * var(--intensity, 0)));
+    }
+
+    .heatmap-ticker {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .heatmap-name {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .heatmap-change {
+      font-size: 15px;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    .heatmap-card.positive .heatmap-change { color: var(--green); }
+    .heatmap-card.negative .heatmap-change { color: var(--red); }
+
+    .heatmap-price {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ===== Quick Hits ===== */
+    .quick-hits-section {
+      margin-bottom: 32px;
+    }
+
+    .quick-hit {
+      font-size: 13.5px;
+      color: var(--text-body);
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      line-height: 1.55;
+    }
+
+    .quick-hit:last-child {
+      border-bottom: none;
+    }
+
+    /* ===== The Bigger Picture ===== */
+    .bigger-picture {
+      border-left: 3px solid var(--accent);
+      padding: 16px 20px;
+      background: rgba(232,150,80,0.04);
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 32px;
+    }
+
+    .bigger-picture-text {
+      font-family: var(--font-serif);
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--text-body);
+    }
+
+    /* ===== AGI Progress Tracker ===== */
+    .agi-tracker {
+      margin-bottom: 32px;
+    }
+
+    .tracker-item {
+      margin-bottom: 16px;
+    }
+
+    .tracker-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .tracker-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .tracker-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-body);
+    }
+
+    .tracker-percent {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .tracker-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+
+    .tracker-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+
+    .tracker-note {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
+
+    /* ===== Disclaimer ===== */
+    .disclaimer {
+      background: var(--card-bg);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 11px;
+      color: var(--text-faint);
+      text-align: center;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    footer a {
+      color: var(--text-dim);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--accent);
+    }
+
+    /* ===== Mobile ===== */
+    @media (max-width: 600px) {
+      .container {
+        padding: 16px 12px 40px;
+      }
+
+      .header-date {
+        font-size: 12px;
+      }
+
+      .lead-in {
+        font-size: 15px;
+      }
+
+      .story-header h3 {
+        font-size: 16px;
+      }
+
+      .heatmap-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .bigger-picture {
+        padding: 14px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- HEADER -->
+    <header>
+      <span class="logo">THE SIGNAL</span>
+      <span class="header-date">Monday, March 23, 2026</span>
+    </header>
+
+    <!-- MARKET PULSE -->
+    <div class="market-pulse">
+      <span class="no-data">No relevant market data today</span>
+    </div>
+
+    <!-- LEAD-IN -->
+    <p class="lead-in">Musk wants to build his own chips. Zuckerberg wants AI to help him run Meta. And the Chinese company that makes more humanoid robots than anyone just filed to go public. The weekend was busy.</p>
+
+    <!-- STORIES -->
+    <section class="stories">
+      <article class="story">
+        <div class="story-header">
+          <span class="category-tag category-business">Business</span>
+          <h3>Musk Unveils $25B &quot;Terafab&quot; — A Joint Tesla-SpaceX-xAI Chip Factory in Austin</h3>
+        </div>
+        <p class="story-body">Elon Musk announced the Terafab project, a joint venture between Tesla, SpaceX, and xAI, to build what he calls the &quot;largest chip manufacturing facility ever.&quot;
+ 
+The project, estimated to cost at least $20 billion, will start with the Advanced Technology Fab in Austin, Texas, where Tesla is already headquartered.
+ 
+Musk said two types of chips will be produced: one for terrestrial purposes like Full Self-Driving and Optimus robots, and another more high-powered, durable chip to be used in space.
+ 
+Tesla says it is targeting 2-nanometer process technology — the most advanced node currently entering commercial production.</p>
+        <p class="why-it-matters">Why it matters → ** This is Musk's most aggressive vertical integration play yet — fusing three companies into a single silicon pipeline. If it works, it gives Tesla's Optimus robot and xAI's Grok a captive chip supply. But 
+Musk has no background in semiconductor production and a history of over-promising on goals and timelines.
+ Building a leading-edge fab from scratch is something even Intel struggles with.</p>
+        <div class="market-note">
+          <span class="market-label">MARKET</span>
+          <p>** TSLA closed Friday at $367.96, 
+down -3.24% on the day and marking the third consecutive day of decline.
+ 
+Tesla's CFO acknowledged that the full Terafab cost is not yet incorporated into Tesla's record capital expenditure plan for 2026, which already exceeds $20 billion.
+ TSLA down ~20% YTD. The implied competition hits NVDA ($172.70, also under pressure), though any Terafab production is years away. Chip equipment names like ASML and AMAT could see secondary tailwinds if orders materialize. The SpaceX IPO — 
+expected to raise as much as $50 billion at a potential $1.75 trillion valuation
+ — may partly fund this.
+
+
+---</p>
+        </div>
+      </article>
+      <div class="story-divider"></div>
+      <article class="story">
+        <div class="story-header">
+          <span class="category-tag category-robotics">Robotics</span>
+          <h3>Unitree Files $610M IPO — The First Pure-Play Humanoid Robot to List</h3>
+        </div>
+        <p class="story-body">Chinese startup Unitree Robotics filed an initial public offering application to the Shanghai Stock Exchange, seeking to raise 4.2 billion yuan ($610 million), in a test of investor interest in humanoid robots.
+ The financials are striking: 
+the company recorded revenue of 1.71 billion yuan last year, up 335% from a year earlier, while net profit on an adjusted basis rose nearly eight times to 600 million yuan.
+ 
+Unitree shipped over 5,500 units last year, occupying 32.4% of the global humanoid market.</p>
+        <p class="why-it-matters">Why it matters → ** This is the first real profitability test for the humanoid robotics thesis. Unitree is profitable — rare in this sector — and shipping at volume. 
+The IPO target valuation of $7 billion represents a 4x jump from the $1.7 billion Series C+ round.
+ If the IPO prices well, it validates the entire humanoid supply chain and puts pressure on Tesla, Figure AI, and others to show comparable economics.</p>
+        <div class="market-note">
+          <span class="market-label">MARKET</span>
+          <p>.
+
+
+<strong>Why it matters:</strong> This is the first real profitability test for the humanoid robotics thesis. Unitree is profitable — rare in this sector — and shipping at volume. 
+The IPO target valuation of $7 billion represents a 4x jump from the $1.7 billion Series C+ round.
+ If the IPO prices well, it validates the entire humanoid supply chain and puts pressure on Tesla, Figure AI, and others to show comparable economics.
+
+<strong>Market:</strong> Unitree will list on Shanghai's STAR Market (no US ticker). The nearest public proxy plays include the Unitree investor ecosystem: Tencent (0700.HK), which is a backer, and component suppliers. For US-listed exposure, watch TSLA (Optimus competitor) and Hyundai subsidiary Boston Dynamics (parent 005380.KS). 
+Unitree has set aggressive targets of 20,000 units for 2026.
+
+
+
+---</p>
+        </div>
+      </article>
+      <div class="story-divider"></div>
+      <article class="story">
+        <div class="story-header">
+          <span class="category-tag category-business">Business</span>
+          <h3>OpenAI Plans to Nearly Double Staff to 8,000 as Anthropic Eats Its Enterprise Lunch</h3>
+        </div>
+        <p class="story-body">OpenAI is reportedly planning to nearly double its staffing levels before the year's end, according to a report Saturday from the Financial Times, which noted this is happening as the AI startup steps up its focus on business customers as it takes on rival Anthropic.
+ 
+OpenAI hopes to expand its workforce from around 4,500 people to roughly 8,000.
+ The urgency is real: 
+according to a Ramp report, a business is about 70% more likely to choose Anthropic solutions at the initial stage than OpenAI products.</p>
+        <p class="why-it-matters">Why it matters → ** The enterprise AI market is bifurcating. OpenAI has consumer mindshare; Anthropic (Claude) is winning new business accounts. 
+OpenAI CEO of applications Fidji Simo told employees: &quot;We cannot miss this moment because we are distracted by side quests.&quot;
+ This hiring surge — adding ~12 employees per day — signals OpenAI is pivoting hard from lab to enterprise platform company.</p>
+        <div class="market-note">
+          <span class="market-label">MARKET</span>
+          <p>is bifurcating. OpenAI has consumer mindshare; Anthropic (Claude) is winning new business accounts. 
+OpenAI CEO of applications Fidji Simo told employees: &quot;We cannot miss this moment because we are distracted by side quests.&quot;
+ This hiring surge — adding ~12 employees per day — signals OpenAI is pivoting hard from lab to enterprise platform company.
+
+<strong>Market:</strong> Both companies are private. 
+OpenAI was recently valued at around $840 billion following a $110 billion funding round.
+ The public proxy is MSFT, which holds a major OpenAI partnership and routes Azure inference. GOOG benefits from Anthropic competition forcing OpenAI to spend more.
+
+---</p>
+        </div>
+      </article>
+      <div class="story-divider"></div>
+      <article class="story">
+        <div class="story-header">
+          <span class="category-tag category-business">Business</span>
+          <h3>Zuckerberg Is Building a Personal AI Agent to Help Him Be CEO</h3>
+        </div>
+        <p class="story-body">Meta CEO Mark Zuckerberg is building a CEO agent to help him do his job, the Wall Street Journal reported on Sunday.
+ 
+The agent is currently helping Zuckerberg get information faster — for instance, by retrieving answers that he would typically have to go through layers of people to get.
+ 
+The project reflects a drive across the 78,000-person company to accelerate the pace of work, eliminate layers from its organizational structure, and change the day-to-day jobs of its employees.</p>
+        <p class="why-it-matters">Why it matters → ** This is a signal, not a product. When the CEO of a $1.5T company builds an AI agent to flatten his own decision-making layer, it telegraphs where agentic AI is heading in every corporate hierarchy. Meta is spending up to $135B on AI capex this year — Zuckerberg eating his own cooking makes the spending narrative more credible.</p>
+        <div class="market-note">
+          <span class="market-label">MARKET</span>
+          <p>** META closed Friday at $593.66, 
+down -2.15% on the day
+ and 
+-7.94% over the past 10 days.
+ Next earnings April 29. The &quot;CEO agent&quot; framing may help the stock's AI narrative ahead of that print.
+
+---</p>
+        </div>
+      </article>
+    </section>
+
+    <!-- SECTOR HEATMAP -->
+    <section class="heatmap-section">
+      <h2 class="section-title">Sector Heatmap</h2>
+      <div class="heatmap-grid">
+        <p class="no-data">No relevant market data today</p>
+      </div>
+    </section>
+
+    <!-- QUICK HITS -->
+    <section class="quick-hits-section">
+      <h2 class="section-title">Quick Hits</h2>
+      <div class="quick-hit"><strong>HD Hyundai</strong> affiliates are partnering to develop AI-powered welding humanoid robots for shipyards in South Korea — a concrete industrial deployment that tests whether humanoids can handle heavy manufacturing. (005380.KS)</div>
+      <div class="quick-hit"><strong>Tencent</strong> added an AI agent called OpenClaw to WeChat (China's most popular app), another step in the agent-inside-messaging-app race that Meta and Google are also running. (0700.HK)</div>
+      <div class="quick-hit"><strong>XPeng</strong> (XPEV) CEO He Xiaopeng reaffirmed that the IRON humanoid robot will begin mass production by year-end 2026.</div>
+      <div class="quick-hit">XPeng unveiled plans for what it calls the industry's first-ever humanoid robot mass production facility in Guangzhou.</div>
+      <div class="quick-hit">A direct Optimus competitor.</div>
+      <div class="quick-hit"><strong>China's national humanoid robot standards</strong>, released in late February, are now being cited by analysts (Oriental Securities) as improving certainty for the supply chain.</div>
+      <div class="quick-hit">More than 140 domestic manufacturers released over 330 humanoid models in 2025</div>
+      <div class="quick-hit">— standardization is about turning that chaos into a real industry.</div>
+    </section>
+
+    <!-- THE BIGGER PICTURE -->
+    <section class="bigger-picture">
+      <h2 class="section-title" style="margin-bottom: 10px;">The Bigger Picture</h2>
+      <p class="bigger-picture-text">This weekend's news had a common thread: the companies building AI and robots are shifting from demonstrations to infrastructure. Musk's Terafab is about owning the silicon layer. Unitree's IPO is about proving the economics of humanoid manufacturing at scale. OpenAI's hiring spree is about converting model capability into enterprise revenue. And Zuckerberg's personal AI agent is a small but revealing example of the broader transition — from AI as a product you use to AI as a layer that reshapes how organizations function. The Chinese angle is increasingly hard to ignore: Unitree shipped 5,500 humanoids last year against roughly 100 from Tesla. Beijing's new national standards framework, covering everything from &quot;brain-like computing&quot; to safety ethics, gives Chinese manufacturers a unified playbook just as Western competitors are still debating form factors. The question for public markets this week: does the Terafab announcement juice TSLA's AI narrative enough to offset the auto business decline, or does Wall Street see it as another Battery Day?</p>
+    </section>
+
+    <!-- AGI PROGRESS TRACKER -->
+    <section class="agi-tracker">
+      <h2 class="section-title">AGI Progress Tracker</h2>
+      <div class="tracker-item">
+        <div class="tracker-header">
+          <span class="tracker-label">Reasoning</span>
+          <span class="tracker-percent">0%</span>
+        </div>
+        <div class="tracker-bar">
+          <div class="tracker-fill" style="width: 0%; background: #e89650"></div>
+        </div>
+        <p class="tracker-note">No update this week</p>
+      </div>
+      <div class="tracker-item">
+        <div class="tracker-header">
+          <span class="tracker-label">Autonomy</span>
+          <span class="tracker-percent">0%</span>
+        </div>
+        <div class="tracker-bar">
+          <div class="tracker-fill" style="width: 0%; background: #6b9ec4"></div>
+        </div>
+        <p class="tracker-note">No update this week</p>
+      </div>
+      <div class="tracker-item">
+        <div class="tracker-header">
+          <span class="tracker-label">Embodiment</span>
+          <span class="tracker-percent">0%</span>
+        </div>
+        <div class="tracker-bar">
+          <div class="tracker-fill" style="width: 0%; background: #7aab6e"></div>
+        </div>
+        <p class="tracker-note">No update this week</p>
+      </div>
+      <div class="tracker-item">
+        <div class="tracker-header">
+          <span class="tracker-label">In-home</span>
+          <span class="tracker-percent">0%</span>
+        </div>
+        <div class="tracker-bar">
+          <div class="tracker-fill" style="width: 0%; background: #c4697a"></div>
+        </div>
+        <p class="tracker-note">No update this week</p>
+      </div>
+    </section>
+
+    <!-- DISCLAIMER -->
+    <div class="disclaimer">
+      This briefing is generated by AI and is for informational purposes only. Not financial advice. Stock data may be delayed.
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <span>Written by Claude &middot; Curated for you</span>
+      <span>thesignal.ai</span>
+    </footer>
+
+  </div>
+</body>
+</html>
