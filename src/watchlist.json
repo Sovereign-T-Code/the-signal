@@ -1,0 +1,32 @@
+{
+  "topics": [
+    "AI model releases and benchmark results",
+    "Humanoid robotics development and deployment",
+    "AGI progress and research breakthroughs",
+    "Robotics entering homes and consumer spaces"
+  ],
+  "watchlist": [
+    { "ticker": "NVDA", "name": "Nvidia", "why": "AI chips, robotics inference silicon" },
+    { "ticker": "GOOG", "name": "Alphabet", "why": "DeepMind, Gemini models" },
+    { "ticker": "TSLA", "name": "Tesla", "why": "Optimus humanoid robot" },
+    { "ticker": "MSFT", "name": "Microsoft", "why": "OpenAI partnership, Azure AI" },
+    { "ticker": "META", "name": "Meta", "why": "Llama models, AI research" },
+    { "ticker": "ARM", "name": "Arm Holdings", "why": "Chip architecture for edge AI" },
+    { "ticker": "AMD", "name": "AMD", "why": "AI accelerators, competition with Nvidia" },
+    { "ticker": "INTC", "name": "Intel", "why": "AI chip efforts, foundry" }
+  ],
+  "private_companies_to_track": [
+    "Anthropic", "OpenAI", "Figure AI", "1X Technologies",
+    "Apptronik", "Boston Dynamics", "Mistral AI", "xAI"
+  ],
+  "rss_feeds": [
+    { "name": "Google News - AI", "url": "https://news.google.com/rss/search?q=artificial+intelligence&hl=en-US&gl=US&ceid=US:en" },
+    { "name": "Google News - Humanoid Robots", "url": "https://news.google.com/rss/search?q=humanoid+robots&hl=en-US&gl=US&ceid=US:en" },
+    { "name": "Google News - AI Models", "url": "https://news.google.com/rss/search?q=AI+models+launch+benchmark&hl=en-US&gl=US&ceid=US:en" },
+    { "name": "TechCrunch AI", "url": "https://techcrunch.com/category/artificial-intelligence/feed/" },
+    { "name": "The Verge AI", "url": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml" },
+    { "name": "Ars Technica AI", "url": "https://feeds.arstechnica.com/arstechnica/technology-lab" },
+    { "name": "Reuters Technology", "url": "https://www.reutersagency.com/feed/?taxonomy=best-topics&post_type=best" },
+    { "name": "MIT Technology Review", "url": "https://www.technologyreview.com/feed/" }
+  ]
+}

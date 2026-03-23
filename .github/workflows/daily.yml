@@ -1,0 +1,35 @@
+name: Generate Daily Signal
+
+on:
+  schedule:
+    - cron: '35 13 * * *'  # 13:35 UTC ≈ 9:35 AM EST
+  workflow_dispatch:        # Manual trigger from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+
+      - name: Generate today's edition
+        run: node scripts/generate.js
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Commit and push new edition
+        run: |
+          git config user.name "The Signal Bot"
+          git config user.email "bot@thesignal.ai"
+          git add site/
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+          git commit -m "Edition: $(date -u +%Y-%m-%d)"
+          git push

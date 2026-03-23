@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Signal — {{DATE_SHORT}}</title>
+  <meta name="description" content="Daily AI and robotics briefing with a financial lens.">
+  <link rel="canonical" href="editions/{{DATE_ISO}}.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ===== Reset ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ===== Custom Properties ===== */
+    :root {
+      --bg: #1a1814;
+      --text-primary: #f0ece4;
+      --text-body: #e8e4dc;
+      --text-secondary: #9e9888;
+      --text-muted: #8a8578;
+      --text-dim: #6b665c;
+      --text-faint: #5a564e;
+      --accent: #e89650;
+      --green: #7aab6e;
+      --red: #c75c5c;
+      --blue: #6b9ec4;
+      --purple: #b088d0;
+      --pink: #c4697a;
+      --border-subtle: rgba(232,150,80,0.2);
+      --card-bg: rgba(255,255,255,0.02);
+      --card-bg-hover: rgba(255,255,255,0.03);
+      --divider: linear-gradient(90deg, transparent, rgba(232,150,80,0.15), transparent);
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-serif: 'Lora', 'Georgia', 'Times New Roman', serif;
+    }
+
+    /* ===== Base ===== */
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container {
+      max-width: 660px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    /* ===== Header ===== */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .header-date {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    /* ===== Market Pulse Bar ===== */
+    .market-pulse {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 12px 14px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      margin-bottom: 24px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.1) transparent;
+    }
+
+    .market-pulse::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .market-pulse::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .market-pulse::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+    }
+
+    .ticker-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      font-size: 13px;
+      padding: 4px 0;
+    }
+
+    .ticker-symbol {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .ticker-price {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .ticker-change {
+      font-weight: 500;
+      font-size: 12px;
+    }
+
+    .ticker-chip.positive .ticker-change { color: var(--green); }
+    .ticker-chip.negative .ticker-change { color: var(--red); }
+
+    .ticker-chip + .ticker-chip {
+      padding-left: 10px;
+      border-left: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .no-data {
+      color: var(--text-dim);
+      font-size: 13px;
+      font-style: italic;
+    }
+
+    /* ===== Lead-in ===== */
+    .lead-in {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 16px;
+      line-height: 1.7;
+      color: #b8b2a6;
+      margin-bottom: 28px;
+      padding: 0 4px;
+    }
+
+    /* ===== Stories ===== */
+    .stories {
+      margin-bottom: 32px;
+    }
+
+    .story {
+      margin-bottom: 8px;
+    }
+
+    .story-header {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .category-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: var(--bg);
+      text-transform: capitalize;
+      flex-shrink: 0;
+    }
+
+    .category-models { background: var(--accent); }
+    .category-robotics { background: var(--green); }
+    .category-business { background: var(--blue); }
+    .category-research { background: var(--purple); }
+    .category-policy { background: var(--pink); }
+
+    .story-header h3 {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.35;
+    }
+
+    .story-body {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .why-it-matters {
+      font-size: 12px;
+      color: var(--accent);
+      opacity: 0.7;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .market-note {
+      background: var(--card-bg-hover);
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+    }
+
+    .market-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      color: var(--blue);
+      margin-bottom: 4px;
+    }
+
+    .market-note p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .story-divider {
+      height: 1px;
+      background: var(--divider);
+      margin: 24px 0;
+    }
+
+    /* ===== Sector Heatmap ===== */
+    .heatmap-section {
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 14px;
+    }
+
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
+    }
+
+    .heatmap-card {
+      background: var(--card-bg);
+      border-radius: 6px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      transition: background 0.15s;
+    }
+
+    .heatmap-card.positive {
+      background: rgba(122,171,110, calc(0.06 + 0.12 * var(--intensity, 0)));
+      border: 1px solid rgba(122,171,110, calc(0.1 + 0.15 * var(--intensity, 0)));
+    }
+
+    .heatmap-card.negative {
+      background: rgba(199,92,92, calc(0.06 + 0.12 * var(--intensity, 0)));
+      border: 1px solid rgba(199,92,92, calc(0.1 + 0.15 * var(--intensity, 0)));
+    }
+
+    .heatmap-ticker {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .heatmap-name {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .heatmap-change {
+      font-size: 15px;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    .heatmap-card.positive .heatmap-change { color: var(--green); }
+    .heatmap-card.negative .heatmap-change { color: var(--red); }
+
+    .heatmap-price {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ===== Quick Hits ===== */
+    .quick-hits-section {
+      margin-bottom: 32px;
+    }
+
+    .quick-hit {
+      font-size: 13.5px;
+      color: var(--text-body);
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      line-height: 1.55;
+    }
+
+    .quick-hit:last-child {
+      border-bottom: none;
+    }
+
+    /* ===== The Bigger Picture ===== */
+    .bigger-picture {
+      border-left: 3px solid var(--accent);
+      padding: 16px 20px;
+      background: rgba(232,150,80,0.04);
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 32px;
+    }
+
+    .bigger-picture-text {
+      font-family: var(--font-serif);
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--text-body);
+    }
+
+    /* ===== AGI Progress Tracker ===== */
+    .agi-tracker {
+      margin-bottom: 32px;
+    }
+
+    .tracker-item {
+      margin-bottom: 16px;
+    }
+
+    .tracker-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .tracker-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .tracker-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-body);
+    }
+
+    .tracker-percent {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .tracker-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+
+    .tracker-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+
+    .tracker-note {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
+
+    /* ===== Disclaimer ===== */
+    .disclaimer {
+      background: var(--card-bg);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 11px;
+      color: var(--text-faint);
+      text-align: center;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    footer a {
+      color: var(--text-dim);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--accent);
+    }
+
+    /* ===== Mobile ===== */
+    @media (max-width: 600px) {
+      .container {
+        padding: 16px 12px 40px;
+      }
+
+      .header-date {
+        font-size: 12px;
+      }
+
+      .lead-in {
+        font-size: 15px;
+      }
+
+      .story-header h3 {
+        font-size: 16px;
+      }
+
+      .heatmap-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .bigger-picture {
+        padding: 14px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- HEADER -->
+    <header>
+      <span class="logo">THE SIGNAL</span>
+      <span class="header-date">{{DATE}}</span>
+    </header>
+
+    <!-- MARKET PULSE -->
+    <div class="market-pulse">
+      {{MARKET_PULSE}}
+    </div>
+
+    <!-- LEAD-IN -->
+    <p class="lead-in">{{LEAD_IN}}</p>
+
+    <!-- STORIES -->
+    <section class="stories">
+      {{STORIES}}
+    </section>
+
+    <!-- SECTOR HEATMAP -->
+    <section class="heatmap-section">
+      <h2 class="section-title">Sector Heatmap</h2>
+      <div class="heatmap-grid">
+        {{HEATMAP}}
+      </div>
+    </section>
+
+    <!-- QUICK HITS -->
+    <section class="quick-hits-section">
+      <h2 class="section-title">Quick Hits</h2>
+      {{QUICK_HITS}}
+    </section>
+
+    <!-- THE BIGGER PICTURE -->
+    <section class="bigger-picture">
+      <h2 class="section-title" style="margin-bottom: 10px;">The Bigger Picture</h2>
+      <p class="bigger-picture-text">{{BIGGER_PICTURE}}</p>
+    </section>
+
+    <!-- AGI PROGRESS TRACKER -->
+    <section class="agi-tracker">
+      <h2 class="section-title">AGI Progress Tracker</h2>
+      {{AGI_TRACKER}}
+    </section>
+
+    <!-- DISCLAIMER -->
+    <div class="disclaimer">
+      This briefing is generated by AI and is for informational purposes only. Not financial advice. Stock data may be delayed.
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <span>Written by Claude &middot; Curated for you</span>
+      <span>thesignal.ai</span>
+    </footer>
+
+  </div>
+</body>
+</html>
