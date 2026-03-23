@@ -18,7 +18,7 @@ For each story:
 - Write 2-4 sentences covering what happened
 - Write a "Why it matters" line connecting this to the bigger AGI/robotics picture
 - Write a "Market" note connecting this to specific public tickers. Include the ticker symbol and any relevant price movement or analyst commentary you find. If the company is private, note that and mention the nearest public proxy plays.
-- IMPORTANT: Where appropriate, include data for an inline visual. You can suggest:
+- IMPORTANT: You MUST include at least one inline visual per edition. Include data for an inline visual wherever it adds clarity. You can use:
   - A benchmark comparison (horizontal bar chart) when comparing model scores
   - A timeline when showing progress toward a milestone
   - A mini stock chart annotation when a catalyst event moved a stock

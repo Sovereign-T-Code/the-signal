@@ -71,6 +71,24 @@
       font-weight: 500;
     }
 
+    .header-nav {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .nav-link {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      transition: color 0.15s;
+    }
+
+    .nav-link:hover {
+      color: var(--accent);
+    }
+
     .header-date {
       font-size: 13px;
       color: var(--text-secondary);
@@ -388,6 +406,194 @@
       line-height: 1.4;
     }
 
+    /* ===== Inline Visuals ===== */
+    .viz-container {
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 14px 0;
+    }
+
+    .viz-title {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    /* -- Benchmark Bars -- */
+    .viz-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .viz-bar-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .viz-bar-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      min-width: 110px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .viz-bar-track {
+      flex: 1;
+      height: 18px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .viz-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+
+    .viz-bar-value {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      min-width: 40px;
+    }
+
+    /* -- Timeline -- */
+    .viz-tl-track {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .viz-tl-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 90px;
+      position: relative;
+    }
+
+    .viz-tl-step::before {
+      content: '';
+      position: absolute;
+      top: 7px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .viz-tl-step:first-child::before {
+      left: 50%;
+    }
+
+    .viz-tl-step:last-child::before {
+      right: 50%;
+    }
+
+    .viz-tl-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      border: 2px solid var(--bg);
+      position: relative;
+      z-index: 1;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+
+    .viz-tl-active .viz-tl-dot {
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(232,150,80,0.4);
+    }
+
+    .viz-tl-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 2px;
+    }
+
+    .viz-tl-year {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .viz-tl-active .viz-tl-year {
+      color: var(--accent);
+    }
+
+    .viz-tl-title {
+      font-size: 12px;
+      color: var(--text-body);
+      font-weight: 500;
+    }
+
+    .viz-tl-desc {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    /* -- Comparison Table -- */
+    .viz-comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .viz-comparison-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .viz-comparison-table td {
+      padding: 8px 10px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .viz-comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .viz-comparison-table tr:hover td {
+      background: rgba(255,255,255,0.02);
+    }
+
+    @media (max-width: 600px) {
+      .viz-bar-label {
+        min-width: 80px;
+        font-size: 11px;
+      }
+
+      .viz-tl-step {
+        min-width: 70px;
+      }
+
+      .viz-comparison-table {
+        font-size: 12px;
+      }
+    }
+
     /* ===== Disclaimer ===== */
     .disclaimer {
       background: var(--card-bg);
@@ -454,7 +660,10 @@
     <!-- HEADER -->
     <header>
       <span class="logo">THE SIGNAL</span>
-      <span class="header-date">{{DATE}}</span>
+      <nav class="header-nav">
+        <a href="archive.html" class="nav-link">Past Editions</a>
+        <span class="header-date">{{DATE}}</span>
+      </nav>
     </header>
 
     <!-- MARKET PULSE -->

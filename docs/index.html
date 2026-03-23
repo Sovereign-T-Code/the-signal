@@ -71,6 +71,24 @@
       font-weight: 500;
     }
 
+    .header-nav {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .nav-link {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      transition: color 0.15s;
+    }
+
+    .nav-link:hover {
+      color: var(--accent);
+    }
+
     .header-date {
       font-size: 13px;
       color: var(--text-secondary);
@@ -388,6 +406,194 @@
       line-height: 1.4;
     }
 
+    /* ===== Inline Visuals ===== */
+    .viz-container {
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 14px 0;
+    }
+
+    .viz-title {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    /* -- Benchmark Bars -- */
+    .viz-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .viz-bar-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .viz-bar-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      min-width: 110px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .viz-bar-track {
+      flex: 1;
+      height: 18px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .viz-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+
+    .viz-bar-value {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      min-width: 40px;
+    }
+
+    /* -- Timeline -- */
+    .viz-tl-track {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .viz-tl-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 90px;
+      position: relative;
+    }
+
+    .viz-tl-step::before {
+      content: '';
+      position: absolute;
+      top: 7px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .viz-tl-step:first-child::before {
+      left: 50%;
+    }
+
+    .viz-tl-step:last-child::before {
+      right: 50%;
+    }
+
+    .viz-tl-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      border: 2px solid var(--bg);
+      position: relative;
+      z-index: 1;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+
+    .viz-tl-active .viz-tl-dot {
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(232,150,80,0.4);
+    }
+
+    .viz-tl-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 2px;
+    }
+
+    .viz-tl-year {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .viz-tl-active .viz-tl-year {
+      color: var(--accent);
+    }
+
+    .viz-tl-title {
+      font-size: 12px;
+      color: var(--text-body);
+      font-weight: 500;
+    }
+
+    .viz-tl-desc {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    /* -- Comparison Table -- */
+    .viz-comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .viz-comparison-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .viz-comparison-table td {
+      padding: 8px 10px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .viz-comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .viz-comparison-table tr:hover td {
+      background: rgba(255,255,255,0.02);
+    }
+
+    @media (max-width: 600px) {
+      .viz-bar-label {
+        min-width: 80px;
+        font-size: 11px;
+      }
+
+      .viz-tl-step {
+        min-width: 70px;
+      }
+
+      .viz-comparison-table {
+        font-size: 12px;
+      }
+    }
+
     /* ===== Disclaimer ===== */
     .disclaimer {
       background: var(--card-bg);
@@ -454,43 +660,131 @@
     <!-- HEADER -->
     <header>
       <span class="logo">THE SIGNAL</span>
-      <span class="header-date">Monday, March 23, 2026</span>
+      <nav class="header-nav">
+        <a href="archive.html" class="nav-link">Past Editions</a>
+        <span class="header-date">Monday, March 23, 2026</span>
+      </nav>
     </header>
 
     <!-- MARKET PULSE -->
     <div class="market-pulse">
-      <span class="no-data">No relevant market data today</span>
+      <div class="ticker-chip negative">
+      <span class="ticker-symbol">NVDA</span>
+      <span class="ticker-price">$172.93</span>
+      <span class="ticker-change">-3.03%</span>
+    </div>
+      <div class="ticker-chip negative">
+      <span class="ticker-symbol">GOOG</span>
+      <span class="ticker-price">$298.79</span>
+      <span class="ticker-change">-2.27%</span>
+    </div>
+      <div class="ticker-chip negative">
+      <span class="ticker-symbol">TSLA</span>
+      <span class="ticker-price">$367.96</span>
+      <span class="ticker-change">-3.24%</span>
+    </div>
+      <div class="ticker-chip negative">
+      <span class="ticker-symbol">MSFT</span>
+      <span class="ticker-price">$381.85</span>
+      <span class="ticker-change">-1.85%</span>
+    </div>
+      <div class="ticker-chip negative">
+      <span class="ticker-symbol">META</span>
+      <span class="ticker-price">$593.66</span>
+      <span class="ticker-change">-2.15%</span>
+    </div>
     </div>
 
     <!-- LEAD-IN -->
-    <p class="lead-in">Musk wants to build his own chips. Zuckerberg wants AI to help him run Meta. And the Chinese company that makes more humanoid robots than anyone just filed to go public. The weekend was busy.</p>
+    <p class="lead-in">China's humanoid robot sector is staking its claim on the global stage — through IPO filings, McDonald's front counters, and half-marathon courses — while OpenAI scrambles to double headcount just to keep pace with Anthropic in the enterprise market.</p>
 
     <!-- STORIES -->
     <section class="stories">
       <article class="story">
         <div class="story-header">
-          <span class="category-tag category-business">Business</span>
-          <h3>Musk Unveils $25B &quot;Terafab&quot; — A Joint Tesla-SpaceX-xAI Chip Factory in Austin</h3>
+          <span class="category-tag category-robotics">Robotics</span>
+          <h3>Unitree Files $610M IPO — and the Numbers Are Real</h3>
         </div>
-        <p class="story-body">Elon Musk announced the Terafab project, a joint venture between Tesla, SpaceX, and xAI, to build what he calls the &quot;largest chip manufacturing facility ever.&quot;
+        <div class="story-body">Unitree Robotics plans to raise about 4.2 billion yuan ($610 million) on Shanghai's STAR board, with proceeds earmarked for AI model research, new product development, and manufacturing expansion.
+ The prospectus, which continued to dominate weekend analysis, reveals a company that has already crossed the profitability threshold most robotics startups are still chasing. 
+The 10-year-old company recorded revenue of 1.71 billion yuan last year, up 335% year-over-year, while adjusted net profit rose nearly eight times to 600 million yuan.
  
-The project, estimated to cost at least $20 billion, will start with the Advanced Technology Fab in Austin, Texas, where Tesla is already headquartered.
+Humanoid robots rose from 1.9% of revenue in 2023 to 51.5% by late 2025, boosting overall gross margin to 59.5%.
  
-Musk said two types of chips will be produced: one for terrestrial purposes like Full Self-Driving and Optimus robots, and another more high-powered, durable chip to be used in space.
- 
-Tesla says it is targeting 2-nanometer process technology — the most advanced node currently entering commercial production.</p>
-        <p class="why-it-matters">Why it matters → ** This is Musk's most aggressive vertical integration play yet — fusing three companies into a single silicon pipeline. If it works, it gives Tesla's Optimus robot and xAI's Grok a captive chip supply. But 
-Musk has no background in semiconductor production and a history of over-promising on goals and timelines.
- Building a leading-edge fab from scratch is something even Intel struggles with.</p>
+Unitree officially reported shipping 5,500 humanoid units in 2025 and has set aggressive targets of 20,000 units for 2026.
+
+
+<div class="viz-container viz-benchmark">
+      <div class="viz-title">Humanoid robot units shipped in 2025</div>
+      <div class="viz-bar-row">
+        <span class="viz-bar-label">Unitree (2025)</span>
+        <div class="viz-bar-track">
+          <div class="viz-bar-fill" style="width: 100.0%; background: var(--accent)"></div>
+        </div>
+        <span class="viz-bar-value">5500</span>
+      </div>
+      <div class="viz-bar-row">
+        <span class="viz-bar-label">AgiBot (2025)</span>
+        <div class="viz-bar-track">
+          <div class="viz-bar-fill" style="width: 92.7%; background: var(--blue)"></div>
+        </div>
+        <span class="viz-bar-value">5100</span>
+      </div>
+      <div class="viz-bar-row">
+        <span class="viz-bar-label">Figure AI (2025 est)</span>
+        <div class="viz-bar-track">
+          <div class="viz-bar-fill" style="width: 2.7%; background: var(--green)"></div>
+        </div>
+        <span class="viz-bar-value">150</span>
+      </div>
+      <div class="viz-bar-row">
+        <span class="viz-bar-label">Tesla Optimus (2025)</span>
+        <div class="viz-bar-track">
+          <div class="viz-bar-fill" style="width: 0.0%; background: var(--purple)"></div>
+        </div>
+        <span class="viz-bar-value">0</span>
+      </div>
+    </div></div>
+        <p class="why-it-matters">Why it matters → This is the first pure-play humanoid robotics IPO filing with real revenue, real margins, and real unit shipments. 
+The IPO positions Unitree as potentially the first mainland-listed humanoid robot stock.
+ If the listing succeeds at the rumored 
+$7 billion valuation target
+, it will set the valuation benchmark for every humanoid startup fundraise going forward — including Figure AI and Apptronik.</p>
         <div class="market-note">
           <span class="market-label">MARKET</span>
-          <p>** TSLA closed Friday at $367.96, 
-down -3.24% on the day and marking the third consecutive day of decline.
+          <p>Unitree is currently private. 
+Key investors include Alibaba, Tencent, China Mobile, Geely Capital, Ant Group, ByteDance's Jinqiu Capital, and HongShan Capital (formerly Sequoia China).
+ The nearest public proxy is <strong>TSLA</strong> (Optimus program), which closed at $367.96 on Friday, 
+down to $381.31 USD, the lowest since September 2025, losing 7.06% over four weeks.
+ Unitree's unit volume lead over Tesla's zero-shipment Optimus underscores the competitive pressure building on Musk's robotics ambitions.
+
+---</p>
+        </div>
+      </article>
+      <div class="story-divider"></div>
+      <article class="story">
+        <div class="story-header">
+          <span class="category-tag category-business">Business</span>
+          <h3>OpenAI Plans to Nearly Double Workforce to 8,000 — Anthropic Is the Reason</h3>
+        </div>
+        <div class="story-body">OpenAI is reportedly planning to nearly double its staffing levels before year's end, according to a report Saturday from the Financial Times, which noted this effort is happening as the AI startup steps up its focus on business customers as it takes on rival Anthropic.
  
-Tesla's CFO acknowledged that the full Terafab cost is not yet incorporated into Tesla's record capital expenditure plan for 2026, which already exceeds $20 billion.
- TSLA down ~20% YTD. The implied competition hits NVDA ($172.70, also under pressure), though any Terafab production is years away. Chip equipment names like ASML and AMAT could see secondary tailwinds if orders materialize. The SpaceX IPO — 
-expected to raise as much as $50 billion at a potential $1.75 trillion valuation
- — may partly fund this.
+OpenAI hopes to expand its workforce from around 4,500 to roughly 8,000, with new hires chiefly in product development, engineering, research, and sales.
+ 
+OpenAI has leased a new office in San Francisco, giving it more than 1 million square feet of real estate with plans to add around 12 employees per day this year.
+
+
+The competitive backdrop is clear: 
+businesses purchasing AI products for the first time are going with Anthropic at three times the rate of OpenAI, according to credit card data.
+ Internally, OpenAI's CEO of applications Fidji Simo has warned employees: 
+&quot;We cannot miss this moment because we are distracted by side quests.&quot;</div>
+        <p class="why-it-matters">Why it matters → This is not just a hiring story — it's an admission that model superiority alone doesn't win enterprise contracts. OpenAI is building out a full sales-and-deployment machine, the kind of operation that Anthropic has been quietly assembling. The AI race is shifting from labs to enterprise sales floors.</p>
+        <div class="market-note">
+          <span class="market-label">MARKET</span>
+          <p>OpenAI is private, 
+recently valued at around $840 billion following a $110 billion funding round involving major tech players and SoftBank.
+ The primary public proxy is <strong>MSFT</strong>, OpenAI's largest investor. Anthropic remains private, backed by <strong>GOOG</strong> (Alphabet) and Amazon (<strong>AMZN</strong>). <strong>NVDA</strong> benefits regardless of who wins the enterprise race — both companies are massive GPU buyers. NVDA closed Friday at $172.93, 
+trading at just 21x forward earnings, down from more than 40x just a few months ago.
 
 
 ---</p>
@@ -500,29 +794,48 @@ expected to raise as much as $50 billion at a potential $1.75 trillion valuation
       <article class="story">
         <div class="story-header">
           <span class="category-tag category-robotics">Robotics</span>
-          <h3>Unitree Files $610M IPO — The First Pure-Play Humanoid Robot to List</h3>
+          <h3>McDonald's Tests Humanoid Robots in Shanghai — Service Sector Deployment Begins</h3>
         </div>
-        <p class="story-body">Chinese startup Unitree Robotics filed an initial public offering application to the Shanghai Stock Exchange, seeking to raise 4.2 billion yuan ($610 million), in a test of investor interest in humanoid robots.
- The financials are striking: 
-the company recorded revenue of 1.71 billion yuan last year, up 335% from a year earlier, while net profit on an adjusted basis rose nearly eight times to 600 million yuan.
+        <div class="story-body">Global fast-food giant McDonald's is testing humanoid service robots at a restaurant in Shanghai, involving robots developed by Keenon Robotics performing a range of front-of-house tasks including greeting customers, providing basic information, delivering food to tables, and collecting trays.
  
-Unitree shipped over 5,500 units last year, occupying 32.4% of the global humanoid market.</p>
-        <p class="why-it-matters">Why it matters → ** This is the first real profitability test for the humanoid robotics thesis. Unitree is profitable — rare in this sector — and shipping at volume. 
-The IPO target valuation of $7 billion represents a 4x jump from the $1.7 billion Series C+ round.
- If the IPO prices well, it validates the entire humanoid supply chain and puts pressure on Tesla, Figure AI, and others to show comparable economics.</p>
+The deployment includes both humanoid-style robots and wheeled service units equipped with screens, reflecting a mix of interaction-focused and logistics-oriented designs.
+ 
+The trial is taking place at a single location and is described as an experimental deployment rather than a full rollout.</div>
+        <p class="why-it-matters">Why it matters → This is one of the first visible deployments of humanoid robots in a mass-market consumer brand's physical space. The robots are basic — more mascot than worker — but the signal matters. 
+China's workforce is shrinking as the population ages, while many younger job seekers are reluctant to take on low-paid, repetitive work, meaning robot technology could fill gaps rather than simply replace people.
+ If McDonald's scales this beyond a single location, it creates a template for every QSR chain globally.</p>
         <div class="market-note">
           <span class="market-label">MARKET</span>
-          <p>.
+          <p>consumer brand's physical space. The robots are basic — more mascot than worker — but the signal matters. 
+China's workforce is shrinking as the population ages, while many younger job seekers are reluctant to take on low-paid, repetitive work, meaning robot technology could fill gaps rather than simply replace people.
+ If McDonald's scales this beyond a single location, it creates a template for every QSR chain globally.
 
+Market: McDonald's (<strong>MCD</strong>) has not commented publicly. Keenon Robotics is private. The broader signal benefits <strong>NVDA</strong> (inference chips for service robots) and Chinese robotics supply chain plays. This deployment pattern — low-cost humanoids in consumer-facing roles — is exactly the market Unitree's G1 at $16,000 is targeting.
 
-<strong>Why it matters:</strong> This is the first real profitability test for the humanoid robotics thesis. Unitree is profitable — rare in this sector — and shipping at volume. 
-The IPO target valuation of $7 billion represents a 4x jump from the $1.7 billion Series C+ round.
- If the IPO prices well, it validates the entire humanoid supply chain and puts pressure on Tesla, Figure AI, and others to show comparable economics.
-
-<strong>Market:</strong> Unitree will list on Shanghai's STAR Market (no US ticker). The nearest public proxy plays include the Unitree investor ecosystem: Tencent (0700.HK), which is a backer, and component suppliers. For US-listed exposure, watch TSLA (Optimus competitor) and Hyundai subsidiary Boston Dynamics (parent 005380.KS). 
-Unitree has set aggressive targets of 20,000 units for 2026.
-
-
+---</p>
+        </div>
+      </article>
+      <div class="story-divider"></div>
+      <article class="story">
+        <div class="story-header">
+          <span class="category-tag category-robotics">Robotics</span>
+          <h3>HD Hyundai Signs Deal for Humanoid Welding Robots in Shipyards</h3>
+        </div>
+        <div class="story-body">HD Hyundai said Monday it has signed a joint development agreement with HD Korea Shipbuilding &amp; Offshore Engineering, HD Hyundai Robotics, and US robotics firm Persona AI to develop and commercialize welding humanoid robots for shipyards.
+ 
+Persona AI will develop a bipedal humanoid platform designed for stable movement in complex shipyard environments.
+ 
+The partners aim to develop humanoid robots performing high-skill tasks such as welding, mobility, perception, and precision control, with a key focus on replicating the workflows of experienced welders using physical AI.
+ 
+The initiative will deliver prototype humanoids by the end of 2026, with field testing and full commercial deployment scheduled to begin in 2027.</div>
+        <p class="why-it-matters">Why it matters → Shipbuilding is among the harshest possible environments for humanoid deployment — uneven surfaces, weather exposure, variable layouts. 
+HD Hyundai faces a serious workforce shortage as previous generations of shipbuilders reach retirement age, while younger workers have not stepped in to join the industry in large numbers.
+ If humanoids can weld in a shipyard, they can work almost anywhere industrial.</p>
+        <div class="market-note">
+          <span class="market-label">MARKET</span>
+          <p>HD Hyundai (<strong>329180.KS</strong>) is public on the Korea Exchange. Persona AI is private (Houston-based). 
+Persona AI raised more than $10 million in pre-seed funding.
+ HD Hyundai's parent also controls Boston Dynamics — notably, they're using <em>external</em> robotics startups for this initiative, suggesting Boston Dynamics' Atlas platform may not yet be commercially viable for industrial tasks.
 
 ---</p>
         </div>
@@ -531,48 +844,21 @@ Unitree has set aggressive targets of 20,000 units for 2026.
       <article class="story">
         <div class="story-header">
           <span class="category-tag category-business">Business</span>
-          <h3>OpenAI Plans to Nearly Double Staff to 8,000 as Anthropic Eats Its Enterprise Lunch</h3>
+          <h3>Tencent Plugs OpenClaw AI Agent Into WeChat's 1 Billion Users</h3>
         </div>
-        <p class="story-body">OpenAI is reportedly planning to nearly double its staffing levels before the year's end, according to a report Saturday from the Financial Times, which noted this is happening as the AI startup steps up its focus on business customers as it takes on rival Anthropic.
+        <div class="story-body">Tencent launched a tool on Sunday to integrate its WeChat messaging platform with the OpenClaw agent, deepening its push into AI agents that have become a key battleground among China's technology companies.
  
-OpenAI hopes to expand its workforce from around 4,500 people to roughly 8,000.
- The urgency is real: 
-according to a Ramp report, a business is about 70% more likely to choose Anthropic solutions at the initial stage than OpenAI products.</p>
-        <p class="why-it-matters">Why it matters → ** The enterprise AI market is bifurcating. OpenAI has consumer mindshare; Anthropic (Claude) is winning new business accounts. 
-OpenAI CEO of applications Fidji Simo told employees: &quot;We cannot miss this moment because we are distracted by side quests.&quot;
- This hiring surge — adding ~12 employees per day — signals OpenAI is pivoting hard from lab to enterprise platform company.</p>
+The software, called ClawBot, will appear as a contact within WeChat, allowing users of China's most popular app with over 1 billion monthly active users to connect directly with OpenClaw, sending and receiving commands through the messaging interface.
+ 
+OpenClaw is an open-source AI agent that can perform tasks such as transferring files and sending emails on users' behalf.
+
+
+The pace of China's AI agent ecosystem is accelerating rapidly: 
+Tencent earlier this month launched its own AI agent suite (QClaw, Lighthouse, WorkBuddy), Alibaba launched Wukong last week for enterprise multi-agent coordination, and Baidu quickly followed with OpenClaw-based agents spanning desktop, cloud, mobile, and smart-home devices.</div>
+        <p class="why-it-matters">Why it matters → The AI agent war in China is moving at a pace the West isn't fully tracking. Every major Chinese tech giant now has an agent platform, and WeChat's integration gives OpenClaw instant distribution to 1 billion+ users — a scale no Western agent product has achieved.</p>
         <div class="market-note">
           <span class="market-label">MARKET</span>
-          <p>is bifurcating. OpenAI has consumer mindshare; Anthropic (Claude) is winning new business accounts. 
-OpenAI CEO of applications Fidji Simo told employees: &quot;We cannot miss this moment because we are distracted by side quests.&quot;
- This hiring surge — adding ~12 employees per day — signals OpenAI is pivoting hard from lab to enterprise platform company.
-
-<strong>Market:</strong> Both companies are private. 
-OpenAI was recently valued at around $840 billion following a $110 billion funding round.
- The public proxy is MSFT, which holds a major OpenAI partnership and routes Azure inference. GOOG benefits from Anthropic competition forcing OpenAI to spend more.
-
----</p>
-        </div>
-      </article>
-      <div class="story-divider"></div>
-      <article class="story">
-        <div class="story-header">
-          <span class="category-tag category-business">Business</span>
-          <h3>Zuckerberg Is Building a Personal AI Agent to Help Him Be CEO</h3>
-        </div>
-        <p class="story-body">Meta CEO Mark Zuckerberg is building a CEO agent to help him do his job, the Wall Street Journal reported on Sunday.
- 
-The agent is currently helping Zuckerberg get information faster — for instance, by retrieving answers that he would typically have to go through layers of people to get.
- 
-The project reflects a drive across the 78,000-person company to accelerate the pace of work, eliminate layers from its organizational structure, and change the day-to-day jobs of its employees.</p>
-        <p class="why-it-matters">Why it matters → ** This is a signal, not a product. When the CEO of a $1.5T company builds an AI agent to flatten his own decision-making layer, it telegraphs where agentic AI is heading in every corporate hierarchy. Meta is spending up to $135B on AI capex this year — Zuckerberg eating his own cooking makes the spending narrative more credible.</p>
-        <div class="market-note">
-          <span class="market-label">MARKET</span>
-          <p>** META closed Friday at $593.66, 
-down -2.15% on the day
- and 
--7.94% over the past 10 days.
- Next earnings April 29. The &quot;CEO agent&quot; framing may help the stock's AI narrative ahead of that print.
+          <p>Tencent (<strong>0700.HK</strong>) is public in Hong Kong. This move puts pressure on <strong>META</strong> (WhatsApp has no comparable agent integration), <strong>MSFT</strong> (Copilot agents), and <strong>GOOG</strong> (Gemini agent ecosystem).
 
 ---</p>
         </div>
@@ -583,27 +869,62 @@ down -2.15% on the day
     <section class="heatmap-section">
       <h2 class="section-title">Sector Heatmap</h2>
       <div class="heatmap-grid">
-        <p class="no-data">No relevant market data today</p>
+        <div class="heatmap-card negative" style="--intensity: 0.61">
+        <span class="heatmap-ticker">NVDA</span>
+        <span class="heatmap-name">Nvidia</span>
+        <span class="heatmap-change">-3.03%</span>
+        <span class="heatmap-price">$172.93</span>
+      </div>
+      <div class="heatmap-card negative" style="--intensity: 0.45">
+        <span class="heatmap-ticker">GOOG</span>
+        <span class="heatmap-name">Alphabet</span>
+        <span class="heatmap-change">-2.27%</span>
+        <span class="heatmap-price">$298.79</span>
+      </div>
+      <div class="heatmap-card negative" style="--intensity: 0.65">
+        <span class="heatmap-ticker">TSLA</span>
+        <span class="heatmap-name">Tesla</span>
+        <span class="heatmap-change">-3.24%</span>
+        <span class="heatmap-price">$367.96</span>
+      </div>
+      <div class="heatmap-card negative" style="--intensity: 0.37">
+        <span class="heatmap-ticker">MSFT</span>
+        <span class="heatmap-name">Microsoft</span>
+        <span class="heatmap-change">-1.85%</span>
+        <span class="heatmap-price">$381.85</span>
+      </div>
+      <div class="heatmap-card negative" style="--intensity: 0.43">
+        <span class="heatmap-ticker">META</span>
+        <span class="heatmap-name">Meta</span>
+        <span class="heatmap-change">-2.15%</span>
+        <span class="heatmap-price">$593.66</span>
+      </div>
       </div>
     </section>
 
     <!-- QUICK HITS -->
     <section class="quick-hits-section">
       <h2 class="section-title">Quick Hits</h2>
-      <div class="quick-hit"><strong>HD Hyundai</strong> affiliates are partnering to develop AI-powered welding humanoid robots for shipyards in South Korea — a concrete industrial deployment that tests whether humanoids can handle heavy manufacturing. (005380.KS)</div>
-      <div class="quick-hit"><strong>Tencent</strong> added an AI agent called OpenClaw to WeChat (China's most popular app), another step in the agent-inside-messaging-app race that Meta and Google are also running. (0700.HK)</div>
-      <div class="quick-hit"><strong>XPeng</strong> (XPEV) CEO He Xiaopeng reaffirmed that the IRON humanoid robot will begin mass production by year-end 2026.</div>
-      <div class="quick-hit">XPeng unveiled plans for what it calls the industry's first-ever humanoid robot mass production facility in Guangzhou.</div>
-      <div class="quick-hit">A direct Optimus competitor.</div>
-      <div class="quick-hit"><strong>China's national humanoid robot standards</strong>, released in late February, are now being cited by analysts (Oriental Securities) as improving certainty for the supply chain.</div>
-      <div class="quick-hit">More than 140 domestic manufacturers released over 330 humanoid models in 2025</div>
-      <div class="quick-hit">— standardization is about turning that chaos into a real industry.</div>
+      <div class="quick-hit"><strong>Chinese humanoid robots complete test run for April half-marathon</strong>:</div>
+      <div class="quick-hit">More than 20 autonomous-navigation teams participated in the first practice test for the Beijing E-Town humanoid robot half-marathon, scheduled for April 19, 2026.</div>
+      <div class="quick-hit">Last year's winner, Tiangong, finished in 2 hours 40 minutes. The upgraded event adds a &quot;RoboBaturu&quot; emergency rescue challenge. A real-world endurance test for the entire Chinese humanoid sector.</div>
+      <div class="quick-hit"><strong>XPeng reaffirms IRON humanoid mass production target for year-end</strong>:</div>
+      <div class="quick-hit">He Xiaopeng says &quot;By the end of 2026, XPENG aims to achieve large-scale mass production of high-level humanoid robots.&quot;</div>
+      <div class="quick-hit">The company (NYSE: <strong>XPEV</strong>) is building a dedicated 110,000 sqm production facility in Guangzhou. Early units will target commercial service roles, not homes or factories.</div>
+      <div class="quick-hit"><strong>NVDA's forward P/E compresses to 21x — value territory?</strong>:</div>
+      <div class="quick-hit">Nvidia's stock trades at 21x forward earnings, down from 40x months ago, looking cheap for a company where CEO Jensen Huang guided for $1 trillion in revenue through 2027 at GTC.</div>
+      <div class="quick-hit">NVDA closed at $172.93 Friday —</div>
+      <div class="quick-hit">down 35% from its 10-year average P/E.</div>
+      <div class="quick-hit">Macro headwinds and AI sentiment correction are creating an entry point debate.</div>
+      <div class="quick-hit">--</div>
     </section>
 
     <!-- THE BIGGER PICTURE -->
     <section class="bigger-picture">
       <h2 class="section-title" style="margin-bottom: 10px;">The Bigger Picture</h2>
-      <p class="bigger-picture-text">This weekend's news had a common thread: the companies building AI and robots are shifting from demonstrations to infrastructure. Musk's Terafab is about owning the silicon layer. Unitree's IPO is about proving the economics of humanoid manufacturing at scale. OpenAI's hiring spree is about converting model capability into enterprise revenue. And Zuckerberg's personal AI agent is a small but revealing example of the broader transition — from AI as a product you use to AI as a layer that reshapes how organizations function. The Chinese angle is increasingly hard to ignore: Unitree shipped 5,500 humanoids last year against roughly 100 from Tesla. Beijing's new national standards framework, covering everything from &quot;brain-like computing&quot; to safety ethics, gives Chinese manufacturers a unified playbook just as Western competitors are still debating form factors. The question for public markets this week: does the Terafab announcement juice TSLA's AI narrative enough to offset the auto business decline, or does Wall Street see it as another Battery Day?</p>
+      <p class="bigger-picture-text">Today's news draws a remarkably clear picture: China is not just building humanoid robots — it's <em>commercializing</em> them at scale, with real revenue, real margins, and now a real IPO filing to prove it. Unitree's 5,500 units shipped in 2025 dwarfs every Western competitor combined, and the prospectus shows humanoid revenue went from nearly nothing to over half the business in just two years. Meanwhile, the deployment frontier is expanding on multiple axes — McDonald's in Shanghai is testing humanoid greeters, HD Hyundai wants them welding ships, and 20+ teams are training for a robot half-marathon. On the AI software side, OpenAI's scramble to double headcount is less about building better models than building better go-to-market — a sign the industry is shifting from research breakthroughs to enterprise deployment execution. Tencent plugging AI agents into WeChat gives China's agent ecosystem instant billion-user scale. The question investors should be asking isn't whether humanoid robots will be a big market — it's whether the U.S. has a competitive response when China's robots are already profitable, shipping, and about to be publicly tradable.
+
+---</p>
     </section>
 
     <!-- AGI PROGRESS TRACKER -->

@@ -114,42 +114,115 @@ function findMentionedTickers(text, watchlist) {
 async function fetchStockData(tickers) {
   if (tickers.length === 0) return [];
 
-  let yahooFinance;
-  try {
-    yahooFinance = require('yahoo-finance2').default;
-  } catch (err) {
-    console.warn('  yahoo-finance2 not available:', err.message);
-    return [];
-  }
+  // Use Yahoo Finance v8 API directly — more reliable than the npm package
+  // which has chronic crumb/cookie issues with Yahoo's anti-scraping measures
+  const symbols = tickers.map(t => t.ticker).join(',');
+  const url = `https://query1.finance.yahoo.com/v8/finance/spark?symbols=${symbols}&range=1d&interval=1d`;
 
   const results = [];
-  for (const stock of tickers) {
-    let success = false;
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      try {
-        const quote = await yahooFinance.quote(stock.ticker);
-        results.push({
-          ticker: stock.ticker,
-          name: stock.name,
-          why: stock.why,
-          price: quote.regularMarketPrice || 0,
-          change: quote.regularMarketChange || 0,
-          changePercent: quote.regularMarketChangePercent || 0,
-          previousClose: quote.regularMarketPreviousClose || 0
-        });
-        success = true;
-        break;
-      } catch (err) {
-        console.warn(`  Attempt ${attempt}/3 for ${stock.ticker}: ${err.message}`);
-        if (attempt < 3) {
-          await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt - 1)));
+
+  try {
+    // First try: batch request via spark API
+    console.log('  Trying Yahoo Finance spark API...');
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      for (const stock of tickers) {
+        // Response is keyed directly by symbol: { NVDA: { close: [...], chartPreviousClose: X }, ... }
+        const sparkData = data[stock.ticker];
+        if (sparkData) {
+          const closes = sparkData.close || [];
+          const price = closes.length > 0 ? closes[closes.length - 1] : 0;
+          const prevClose = sparkData.chartPreviousClose || sparkData.previousClose || 0;
+          const change = price - prevClose;
+          const changePct = prevClose > 0 ? (change / prevClose) * 100 : 0;
+          if (price > 0) {
+            results.push({
+              ticker: stock.ticker,
+              name: stock.name,
+              why: stock.why,
+              price,
+              change,
+              changePercent: changePct,
+              previousClose: prevClose
+            });
+          }
         }
       }
     }
-    if (!success) {
-      console.warn(`  Failed to fetch ${stock.ticker} after 3 attempts`);
+  } catch (err) {
+    console.warn('  Spark API failed:', err.message);
+  }
+
+  // Fallback: try v6 quote API if spark didn't return results
+  if (results.length === 0) {
+    try {
+      console.log('  Trying Yahoo Finance quote API...');
+      const quoteUrl = `https://query1.finance.yahoo.com/v6/finance/quote?symbols=${symbols}`;
+      const response = await fetch(quoteUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        for (const stock of tickers) {
+          const quote = data.quoteResponse?.result?.find(r => r.symbol === stock.ticker);
+          if (quote) {
+            results.push({
+              ticker: stock.ticker,
+              name: stock.name,
+              why: stock.why,
+              price: quote.regularMarketPrice || 0,
+              change: quote.regularMarketChange || 0,
+              changePercent: quote.regularMarketChangePercent || 0,
+              previousClose: quote.regularMarketPreviousClose || 0
+            });
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('  Quote API failed:', err.message);
     }
   }
+
+  // Final fallback: try yahoo-finance2 package one ticker at a time
+  if (results.length === 0) {
+    try {
+      console.log('  Trying yahoo-finance2 package...');
+      const mod = await import('yahoo-finance2');
+      const YF = mod.default || mod;
+      const yahooFinance = typeof YF === 'function' ? new YF() : YF;
+      if (yahooFinance.suppressNotices) yahooFinance.suppressNotices(['yahooSurvey']);
+
+      for (let i = 0; i < tickers.length; i++) {
+        if (i > 0) await new Promise(r => setTimeout(r, 3000));
+        try {
+          const quote = await yahooFinance.quote(tickers[i].ticker);
+          results.push({
+            ticker: tickers[i].ticker,
+            name: tickers[i].name,
+            why: tickers[i].why,
+            price: quote.regularMarketPrice || 0,
+            change: quote.regularMarketChange || 0,
+            changePercent: quote.regularMarketChangePercent || 0,
+            previousClose: quote.regularMarketPreviousClose || 0
+          });
+        } catch (err) {
+          console.warn(`  ${tickers[i].ticker}: ${err.message}`);
+        }
+      }
+    } catch (err) {
+      console.warn('  yahoo-finance2 package unavailable:', err.message);
+    }
+  }
+
   return results;
 }
 
@@ -244,8 +317,8 @@ function parseEdition(rawText) {
         .filter(line => line.length > 0 && !line.startsWith('['));
     }
 
-    // Bigger picture: strip any visual blocks
-    result.biggerPicture = stripVisualBlocks(sections['THE BIGGER PICTURE'] || '').trim();
+    // Bigger picture: render any visual blocks inline
+    result.biggerPicture = renderVisualBlocks(sections['THE BIGGER PICTURE'] || '').trim();
 
     // AGI tracker
     if (sections['AGI TRACKER']) {
@@ -313,7 +386,7 @@ function parseStories(storiesText) {
 }
 
 function extractStoryParts(category, headline, content) {
-  content = stripVisualBlocks(content);
+  content = renderVisualBlocks(content);
 
   let body = '', whyItMatters = '', market = '';
 
@@ -361,6 +434,147 @@ function parseTracker(text) {
       note: match ? match[2].trim() : 'No update this week'
     };
   });
+}
+
+// ============================================================
+// Visual Block Renderer
+// ============================================================
+
+function parseVisualBlocks(text) {
+  const blocks = [];
+  const visualRegex = /\[VISUAL:\s*type=(\w+)\]\s*\n(\[(?:DATA|LABEL|HIGHLIGHT)[^\]]*\]\s*\n?)+/gi;
+  let match;
+
+  while ((match = visualRegex.exec(text)) !== null) {
+    const fullBlock = match[0];
+    const type = match[1].toLowerCase();
+
+    const dataMatch = fullBlock.match(/\[DATA:\s*(.+?)\]/i);
+    const labelMatch = fullBlock.match(/\[LABEL:\s*(.+?)\]/i);
+    const highlightMatch = fullBlock.match(/\[HIGHLIGHT:\s*(.+?)\]/i);
+
+    blocks.push({
+      fullMatch: fullBlock,
+      type,
+      data: dataMatch ? dataMatch[1].trim() : '',
+      label: labelMatch ? labelMatch[1].trim() : '',
+      highlight: highlightMatch ? highlightMatch[1].trim() : ''
+    });
+  }
+  return blocks;
+}
+
+function renderBenchmarkBars(block) {
+  // Parse "ModelA=82.4, ModelB=65.1"
+  const entries = block.data.split(',').map(e => {
+    const [name, val] = e.split('=').map(s => s.trim());
+    return { name, value: parseFloat(val) || 0 };
+  }).filter(e => e.name);
+
+  if (entries.length === 0) return '';
+
+  const maxVal = Math.max(...entries.map(e => e.value), 1);
+
+  const bars = entries.map((e, i) => {
+    const widthPct = (e.value / maxVal * 100).toFixed(1);
+    const colors = ['var(--accent)', 'var(--blue)', 'var(--green)', 'var(--purple)', 'var(--pink)'];
+    const color = colors[i % colors.length];
+    return `<div class="viz-bar-row">
+        <span class="viz-bar-label">${escapeHtml(e.name)}</span>
+        <div class="viz-bar-track">
+          <div class="viz-bar-fill" style="width: ${widthPct}%; background: ${color}"></div>
+        </div>
+        <span class="viz-bar-value">${e.value}</span>
+      </div>`;
+  }).join('\n      ');
+
+  return `<div class="viz-container viz-benchmark">
+      ${block.label ? `<div class="viz-title">${escapeHtml(block.label)}</div>` : ''}
+      ${bars}
+    </div>`;
+}
+
+function renderTimeline(block) {
+  // Parse "2024|Figure 01|Lab only, 2025|Figure 02|Warehouse, ..."
+  const entries = block.data.split(',').map(e => {
+    const parts = e.trim().split('|').map(s => s.trim());
+    return { year: parts[0] || '', title: parts[1] || '', desc: parts[2] || '' };
+  }).filter(e => e.year);
+
+  if (entries.length === 0) return '';
+
+  const steps = entries.map(e => {
+    const isHighlighted = block.highlight && e.year.includes(block.highlight);
+    const cls = isHighlighted ? ' viz-tl-active' : '';
+    return `<div class="viz-tl-step${cls}">
+        <div class="viz-tl-dot"></div>
+        <div class="viz-tl-content">
+          <span class="viz-tl-year">${escapeHtml(e.year)}</span>
+          ${e.title ? `<span class="viz-tl-title">${escapeHtml(e.title)}</span>` : ''}
+          ${e.desc ? `<span class="viz-tl-desc">${escapeHtml(e.desc)}</span>` : ''}
+        </div>
+      </div>`;
+  }).join('\n      ');
+
+  return `<div class="viz-container viz-timeline">
+      ${block.label ? `<div class="viz-title">${escapeHtml(block.label)}</div>` : ''}
+      <div class="viz-tl-track">
+        ${steps}
+      </div>
+    </div>`;
+}
+
+function renderComparisonTable(block) {
+  // Parse "Row1Col1|Row1Col2, Row2Col1|Row2Col2" — first entry is header
+  const rows = block.data.split(',').map(r =>
+    r.trim().split('|').map(s => s.trim())
+  ).filter(r => r.length > 0);
+
+  if (rows.length === 0) return '';
+
+  const headerRow = rows[0];
+  const dataRows = rows.slice(1);
+
+  const headerCells = headerRow.map(h => `<th>${escapeHtml(h)}</th>`).join('');
+  const bodyRows = dataRows.map(row => {
+    const cells = row.map(c => `<td>${escapeHtml(c)}</td>`).join('');
+    return `<tr>${cells}</tr>`;
+  }).join('\n        ');
+
+  return `<div class="viz-container viz-table">
+      ${block.label ? `<div class="viz-title">${escapeHtml(block.label)}</div>` : ''}
+      <table class="viz-comparison-table">
+        <thead><tr>${headerCells}</tr></thead>
+        <tbody>${bodyRows}</tbody>
+      </table>
+    </div>`;
+}
+
+function renderVisualBlocks(text) {
+  const blocks = parseVisualBlocks(text);
+
+  for (const block of blocks) {
+    let html = '';
+    switch (block.type) {
+      case 'benchmark_bars':
+      case 'benchmark':
+        html = renderBenchmarkBars(block);
+        break;
+      case 'timeline':
+        html = renderTimeline(block);
+        break;
+      case 'comparison':
+      case 'comparison_table':
+      case 'table':
+        html = renderComparisonTable(block);
+        break;
+      default:
+        html = ''; // Unknown type — just remove it
+    }
+    text = text.replace(block.fullMatch, html);
+  }
+
+  return text;
 }
 
 function stripVisualBlocks(text) {
@@ -419,7 +633,7 @@ function buildStoriesHTML(stories) {
           ${story.category ? `<span class="category-tag ${categoryClass}">${escapeHtml(story.category)}</span>` : ''}
           <h3>${escapeHtml(story.headline)}</h3>
         </div>
-        <p class="story-body">${renderMarkdown(story.body)}</p>
+        <div class="story-body">${story.body.includes('viz-container') ? story.body : renderMarkdown(story.body)}</div>
         ${story.whyItMatters ? `<p class="why-it-matters">Why it matters → ${renderMarkdown(story.whyItMatters)}</p>` : ''}
         ${story.market ? `<div class="market-note">
           <span class="market-label">MARKET</span>
@@ -482,7 +696,7 @@ function buildHTML(template, edition, stockData, dateStr) {
     .replace(/\{\{STORIES\}\}/g, buildStoriesHTML(edition.stories))
     .replace(/\{\{HEATMAP\}\}/g, buildHeatmapHTML(stockData))
     .replace(/\{\{QUICK_HITS\}\}/g, buildQuickHitsHTML(edition.quickHits))
-    .replace(/\{\{BIGGER_PICTURE\}\}/g, renderMarkdown(edition.biggerPicture))
+    .replace(/\{\{BIGGER_PICTURE\}\}/g, edition.biggerPicture.includes('viz-container') ? edition.biggerPicture : renderMarkdown(edition.biggerPicture))
     .replace(/\{\{AGI_TRACKER\}\}/g, buildTrackerHTML(edition.tracker))
     .replace(/\{\{HEADLINE\}\}/g, escapeHtml(headline));
 }
@@ -624,7 +838,10 @@ function getBaseArchiveHTML() {
   <div class="container">
     <header>
       <a href="index.html" style="text-decoration:none"><span class="logo">THE SIGNAL</span></a>
-      <span class="page-title">Archive</span>
+      <nav style="display:flex;align-items:baseline;gap:16px">
+        <a href="index.html" style="font-size:12px;color:#8a8578;text-decoration:none">← Latest</a>
+        <span class="page-title">Archive</span>
+      </nav>
     </header>
     <div class="archive-list">
     <!-- ENTRIES -->
