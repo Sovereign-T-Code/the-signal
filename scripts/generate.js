@@ -9,12 +9,12 @@ const Parser = require('rss-parser');
 // ============================================================
 
 const ROOT = path.resolve(__dirname, '..');
-const EDITIONS_DIR = path.join(ROOT, 'site', 'editions');
+const EDITIONS_DIR = path.join(ROOT, 'docs', 'editions');
 const TEMPLATE_PATH = path.join(ROOT, 'src', 'template.html');
 const PROMPT_PATH = path.join(ROOT, 'src', 'prompt.md');
 const WATCHLIST_PATH = path.join(ROOT, 'src', 'watchlist.json');
-const INDEX_PATH = path.join(ROOT, 'site', 'index.html');
-const ARCHIVE_PATH = path.join(ROOT, 'site', 'archive.html');
+const INDEX_PATH = path.join(ROOT, 'docs', 'index.html');
+const ARCHIVE_PATH = path.join(ROOT, 'docs', 'archive.html');
 
 const now = new Date();
 const today = now.toISOString().split('T')[0];
@@ -497,11 +497,11 @@ function saveEdition(html, dateStr, headline) {
   // Write edition file
   const edPath = path.join(EDITIONS_DIR, `${dateStr}.html`);
   fs.writeFileSync(edPath, html, 'utf-8');
-  console.log(`  Saved: site/editions/${dateStr}.html`);
+  console.log(`  Saved: docs/editions/${dateStr}.html`);
 
   // Copy to index.html
   fs.writeFileSync(INDEX_PATH, html, 'utf-8');
-  console.log(`  Updated: site/index.html`);
+  console.log(`  Updated: docs/index.html`);
 
   // Update archive
   updateArchive(dateStr, headline);
@@ -527,7 +527,7 @@ function updateArchive(dateStr, headline) {
   );
 
   fs.writeFileSync(ARCHIVE_PATH, archiveHtml, 'utf-8');
-  console.log(`  Updated: site/archive.html`);
+  console.log(`  Updated: docs/archive.html`);
 }
 
 function getBaseArchiveHTML() {
@@ -682,7 +682,7 @@ async function main() {
   const headline = edition.stories.length > 0 ? edition.stories[0].headline : 'The Signal';
   saveEdition(html, today, headline);
 
-  console.log(`\n✓ Done! Open site/editions/${today}.html in your browser.\n`);
+  console.log(`\n✓ Done! Open docs/editions/${today}.html in your browser.\n`);
 }
 
 main().catch(err => {
