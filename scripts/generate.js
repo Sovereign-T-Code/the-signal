@@ -127,7 +127,8 @@ async function fetchStockData(tickers) {
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      }
+      },
+      signal: AbortSignal.timeout(15000)
     });
 
     if (response.ok) {
@@ -167,7 +168,8 @@ async function fetchStockData(tickers) {
       const response = await fetch(quoteUrl, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-        }
+        },
+        signal: AbortSignal.timeout(15000)
       });
 
       if (response.ok) {
@@ -192,7 +194,7 @@ async function fetchStockData(tickers) {
     }
   }
 
-  // Final fallback: try yahoo-finance2 package one ticker at a time
+  // Final fallback: try yahoo-finance2 package one ticker at a time (30s total timeout)
   if (results.length === 0) {
     try {
       console.log('  Trying yahoo-finance2 package...');
@@ -201,10 +203,15 @@ async function fetchStockData(tickers) {
       const yahooFinance = typeof YF === 'function' ? new YF() : YF;
       if (yahooFinance.suppressNotices) yahooFinance.suppressNotices(['yahooSurvey']);
 
+      const deadline = Date.now() + 30000;
       for (let i = 0; i < tickers.length; i++) {
+        if (Date.now() > deadline) { console.warn('  yahoo-finance2 timeout — moving on'); break; }
         if (i > 0) await new Promise(r => setTimeout(r, 3000));
         try {
-          const quote = await yahooFinance.quote(tickers[i].ticker);
+          const quote = await Promise.race([
+            yahooFinance.quote(tickers[i].ticker),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000))
+          ]);
           results.push({
             ticker: tickers[i].ticker,
             name: tickers[i].name,
@@ -271,7 +278,7 @@ Write today's edition of The Signal.`;
       max_uses: 15
     }],
     messages: [{ role: 'user', content: userMessage }]
-  });
+  }, { timeout: 5 * 60 * 1000 });
 
   const textContent = response.content
     .filter(block => block.type === 'text')
@@ -386,8 +393,7 @@ function parseStories(storiesText) {
 }
 
 function extractStoryParts(category, headline, content) {
-  content = renderVisualBlocks(content);
-
+  // Extract sections BEFORE rendering visuals, so viz markup doesn't leak into market/whyItMatters
   let body = '', whyItMatters = '', market = '';
 
   // Find "Why it matters" line
@@ -412,6 +418,11 @@ function extractStoryParts(category, headline, content) {
 
   // Clean up any remaining category tags from body
   body = body.replace(/\[CATEGORY:[^\]]+\]\s*/gi, '').trim();
+
+  // Render visuals only in the body; strip stray visual markup from other sections
+  body = renderVisualBlocks(body);
+  whyItMatters = stripVisualBlocks(whyItMatters);
+  market = stripVisualBlocks(market);
 
   if (!headline) return null;
   return { category, headline, body, whyItMatters, market };
@@ -604,6 +615,47 @@ function renderMarkdown(text) {
     .replace(/`(.+?)`/g, '<code>$1</code>');
 }
 
+function renderMixedContent(text) {
+  if (!text.includes('viz-container')) {
+    return renderMarkdown(text);
+  }
+  // Split text into viz-container HTML segments and plain text segments.
+  // Viz blocks are already rendered HTML — pass them through untouched.
+  // Plain text gets markdown-rendered (with HTML escaping).
+  const segments = [];
+  let remaining = text;
+
+  while (remaining.length > 0) {
+    const vizStart = remaining.indexOf('<div class="viz-container');
+    if (vizStart === -1) {
+      segments.push({ type: 'text', content: remaining });
+      break;
+    }
+    if (vizStart > 0) {
+      segments.push({ type: 'text', content: remaining.substring(0, vizStart) });
+    }
+    // Find matching closing </div> by counting open/close depth
+    let depth = 0, i = vizStart, endIdx = -1;
+    while (i < remaining.length) {
+      if (remaining.startsWith('<div', i)) {
+        depth++;
+        i += 4;
+      } else if (remaining.startsWith('</div>', i)) {
+        depth--;
+        if (depth === 0) { endIdx = i + 6; break; }
+        i += 6;
+      } else {
+        i++;
+      }
+    }
+    if (endIdx === -1) endIdx = remaining.length;
+    segments.push({ type: 'viz', content: remaining.substring(vizStart, endIdx) });
+    remaining = remaining.substring(endIdx);
+  }
+
+  return segments.map(seg => seg.type === 'viz' ? seg.content : renderMarkdown(seg.content)).join('');
+}
+
 function buildMarketPulseHTML(stockData) {
   if (stockData.length === 0) {
     return '<span class="no-data">No relevant market data today</span>';
@@ -633,7 +685,7 @@ function buildStoriesHTML(stories) {
           ${story.category ? `<span class="category-tag ${categoryClass}">${escapeHtml(story.category)}</span>` : ''}
           <h3>${escapeHtml(story.headline)}</h3>
         </div>
-        <div class="story-body">${story.body.includes('viz-container') ? story.body : renderMarkdown(story.body)}</div>
+        <div class="story-body">${renderMixedContent(story.body)}</div>
         ${story.whyItMatters ? `<p class="why-it-matters">Why it matters → ${renderMarkdown(story.whyItMatters)}</p>` : ''}
         ${story.market ? `<div class="market-note">
           <span class="market-label">MARKET</span>
@@ -696,7 +748,7 @@ function buildHTML(template, edition, stockData, dateStr) {
     .replace(/\{\{STORIES\}\}/g, buildStoriesHTML(edition.stories))
     .replace(/\{\{HEATMAP\}\}/g, buildHeatmapHTML(stockData))
     .replace(/\{\{QUICK_HITS\}\}/g, buildQuickHitsHTML(edition.quickHits))
-    .replace(/\{\{BIGGER_PICTURE\}\}/g, edition.biggerPicture.includes('viz-container') ? edition.biggerPicture : renderMarkdown(edition.biggerPicture))
+    .replace(/\{\{BIGGER_PICTURE\}\}/g, renderMixedContent(edition.biggerPicture))
     .replace(/\{\{AGI_TRACKER\}\}/g, buildTrackerHTML(edition.tracker))
     .replace(/\{\{HEADLINE\}\}/g, escapeHtml(headline));
 }
