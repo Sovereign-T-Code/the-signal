@@ -954,7 +954,9 @@ async function main() {
   console.log(`\n✓ Done! Open docs/editions/${today}.html in your browser.\n`);
 }
 
-main().catch(err => {
+main().then(() => {
+  process.exit(0);
+}).catch(err => {
   console.error('\nFatal error:', err);
   process.exit(1);
 });
